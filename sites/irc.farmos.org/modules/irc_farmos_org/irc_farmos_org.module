@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the irc.farmos.org feature.
+ */
+
+include_once 'irc_farmos_org.features.inc';
