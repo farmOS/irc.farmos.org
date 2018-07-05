@@ -1,4 +1,31 @@
-// $Id: CHANGELOG.txt,v 1.14.2.16.2.44.2.11 2011/01/05 02:06:38 morbus Exp $
+
+Bot 7.x-1.4, 2013-XX-XX
+-----------------------
+* Move Trac from bot_project into bot_trac.
+* Rename bot_project to bot_drupal_project.
+* Revise front page on drupal.org.
+* Add a list of other bot modules to front page.
+* Help lookup for api module
+    case 'irc:features#function_lookups':
+      return t('The bot provides function lookups, triggered by "<function>?", based on the host\'s installed branches. Branches besides the default, if any, can be specified with "<function>:<branch>?".');
+* add the placeholder "file a patch!" docs in again
+* rename bot_potpourri to bot_timezones
+
+  * #1883616: Long URL titles caused disconnect (thanks xjm, timplunkett).
+  * #1837044: bot_log display fails on Postgres (thanks Gisle, steinmb).
+  * #1561344: Corrected typo in Doxygen (thanks penyaskito).
+  * #1539194: Trim further whitespace from channel list (thanks jhr).
+  * #1254268: Removed LIKE on factoid deletion (thanks greg.harvey).
+  * #1067748: Only MySQL under MySQL (thanks Garrett Albright).
+  * #1061292: Moved api.module integration to its own module.
+   - We are now no longer dependent on api.module being installed.
+   - We instead use the function dump URLs provided by api.module...
+   - ... which means API installations can be remote from the bot install.
+   - The default configuration supports D6 and D7 core *and* contrib.
+   - Thanks to snufkin for the groundwork, psynaptic for drupalcontrib.org.
+   - YOU'LL NEED TO CONFIGURE bot_api. THERE IS NO MIGRATION FROM BOT PROJECT.
+  * Fixed crash on bad time format in bot_potpourri (thanks ilo).
+  * Changed default #test channel to #botwar per Freenode's docs.
 
 Bot 7.x-1.3, 2011-01-05
 -----------------------
