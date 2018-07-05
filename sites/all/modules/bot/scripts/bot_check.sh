@@ -8,8 +8,11 @@
 #
 #   * * * * * cd /path/to/bot/scripts && sh bot_check.sh >> /dev/null 2>&1
 
-if ! ps ax | grep -v grep | grep bot-start
+#if ! ps ax | grep -v grep | grep bot-start
+if ! ps ax | grep -v grep | grep bot_start
 then
-  drush -y bot-status-reset
-  nohup drush bot-start >> bot.log &
+  #drush -y bot-status-reset
+  drush @irc.farmos.org -y bot-status-reset
+  #nohup drush bot-start >> bot.log &
+  nohup php /var/aegir/platforms/irc.farmos.org/sites/all/modules/bot/scripts/bot_start.php --root /var/aegir/platforms/irc.farmos.org --url http://irc.farmos.org >> bot.log &
 fi
