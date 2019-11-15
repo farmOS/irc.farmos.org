@@ -12,7 +12,7 @@
 if ! ps ax | grep -v grep | grep bot_start
 then
   #drush -y bot-status-reset
-  drush -r /var/www/html -l http://irc.farmos.org bot-status-reset
+  drush -r /var/www/html -l http://irc.farmos.org -y bot-status-reset
   #nohup drush bot-start >> bot.log &
   nohup php /var/www/html/sites/all/modules/bot/scripts/bot_start.php --root /var/www/html --url http://irc.farmos.org >> bot.log &
 fi
