@@ -23,7 +23,6 @@ features[variable][] = bot_ghost
 features[variable][] = bot_identify
 features[variable][] = bot_log_channels
 features[variable][] = bot_nickname
-features[variable][] = bot_password
 features[variable][] = bot_real_sockets
 features[variable][] = bot_server
 features[variable][] = bot_server_port

@@ -72,13 +72,6 @@ function irc_farmos_org_strongarm() {
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
-  $strongarm->name = 'bot_password';
-  $strongarm->value = '';
-  $export['bot_password'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
   $strongarm->name = 'bot_real_sockets';
   $strongarm->value = 1;
   $export['bot_real_sockets'] = $strongarm;
