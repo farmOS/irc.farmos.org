@@ -3,6 +3,7 @@ description = Configuration for irc.farmos.org.
 core = 7.x
 package = Features
 dependencies[] = backup_migrate
+dependencies[] = bot
 dependencies[] = bot_log
 dependencies[] = ctools
 dependencies[] = features
