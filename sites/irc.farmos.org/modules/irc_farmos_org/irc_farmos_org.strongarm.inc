@@ -87,7 +87,7 @@ function irc_farmos_org_strongarm() {
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'bot_server';
-  $strongarm->value = 'irc.libera.chat';
+  $strongarm->value = 'irc.oftc.net';
   $export['bot_server'] = $strongarm;
 
   $strongarm = new stdClass();
