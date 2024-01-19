@@ -8,7 +8,7 @@
 /**
  * The current system version.
  */
-define('VERSION', '7.90');
+define('VERSION', '7.99');
 
 /**
  * Core API compatibility.
@@ -18,7 +18,7 @@ define('DRUPAL_CORE_COMPATIBILITY', '7.x');
 /**
  * Minimum supported version of PHP.
  */
-define('DRUPAL_MINIMUM_PHP', '5.2.4');
+define('DRUPAL_MINIMUM_PHP', '5.3.3');
 
 /**
  * Minimum recommended value of PHP memory_limit.
@@ -454,6 +454,9 @@ abstract class DrupalCacheArray implements ArrayAccess {
    * Destructs the DrupalCacheArray object.
    */
   public function __destruct() {
+    if ($this->bin == 'cache_form' && !variable_get('drupal_cache_array_persist_cache_form', FALSE)) {
+      return;
+    }
     $data = array();
     foreach ($this->keysToPersist as $offset => $persist) {
       if ($persist) {
@@ -2039,6 +2042,8 @@ function watchdog_exception($type, Exception $exception, $message = NULL, $varia
  *   - WATCHDOG_DEBUG: Debug-level messages.
  * @param $link
  *   A link to associate with the message.
+ *   SECURITY NOTE: Make sure your link is properly sanitized.
+ *   Use the l() function to generate secure links.
  *
  * @see watchdog_severity_levels()
  * @see hook_watchdog()
@@ -2303,15 +2308,30 @@ function drupal_base64_encode($string) {
 /**
  * Returns a string of highly randomized bytes (over the full 8-bit range).
  *
- * This function is better than simply calling mt_rand() or any other built-in
- * PHP function because it can return a long string of bytes (compared to < 4
- * bytes normally from mt_rand()) and uses the best available pseudo-random
- * source.
+ * On PHP 7 and later, this function is a wrapper around the built-in PHP
+ * function random_bytes(). If that function does not exist or cannot find an
+ * appropriate source of randomness, this function is better than simply calling
+ * mt_rand() or any other built-in PHP function because it can return a long
+ * string of bytes (compared to < 4 bytes normally from mt_rand()) and uses the
+ * best available pseudo-random source.
  *
- * @param $count
+ * @param int $count
  *   The number of characters (bytes) to return in the string.
+ *
+ * @return string
+ *   A randomly generated string.
  */
 function drupal_random_bytes($count)  {
+  if (function_exists('random_bytes')) {
+    try {
+      return random_bytes($count);
+    }
+    catch (Exception $e) {
+      // An appropriate source of randomness could not be found. Fall back to a
+      // less secure implementation.
+    }
+  }
+
   // $random_state does not use drupal_static as it stores random bytes.
   static $random_state, $bytes, $has_openssl;
 
@@ -2348,7 +2368,7 @@ function drupal_random_bytes($count)  {
     // the microtime() - is prepended rather than appended. This is to avoid
     // directly leaking $random_state via the $output stream, which could
     // allow for trivial prediction of further "random" numbers.
-    if (strlen($bytes) < $count) {
+    if (strlen((string) $bytes) < $count) {
       // Initialize on the first call. The contents of $_SERVER includes a mix of
       // user-specific and system information that varies a little with each page.
       if (!isset($random_state)) {
@@ -3949,6 +3969,14 @@ function drupal_setcookie($name, $value, $options) {
     setcookie($name, $value, $options);
   }
   else {
+    $defaults = array(
+      'expires' => 0,
+      'path' => '',
+      'domain' => '',
+      'secure' => FALSE,
+      'httponly' => FALSE,
+    );
+    $options += $defaults;
     setcookie($name, $value, $options['expires'], $options['path'], $options['domain'], $options['secure'], $options['httponly']);
   }
 }

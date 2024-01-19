@@ -534,6 +534,19 @@ class LocaleTranslationFunctionalTest extends DrupalWebTestCase {
     cache_clear_all();
     _locale_rebuild_js($langcode);
     $this->assertTrue($result = file_exists($js_file), format_string('JavaScript file rebuilt: %file', array('%file' => $result ? $js_file : 'not found')));
+
+    // Test if JavaScript translation contains a custom string override.
+    $string_override = $this->randomName();
+    variable_set('locale_custom_strings_' . $langcode, array('' => array($string_override => $string_override)));
+    _locale_rebuild_js($langcode);
+    $file = db_select('languages', 'l')
+      ->fields('l', array('javascript'))
+      ->condition('language', $langcode)
+      ->execute()
+      ->fetchObject();
+    $js_file = 'public://' . variable_get('locale_js_directory', 'languages') . '/' . $langcode . '_' . $file->javascript . '.js';
+    $content = file_get_contents($js_file);
+    $this->assertTrue(strpos($content, '"' . $string_override . '":"' . $string_override . '"') > 0);
   }
 
   /**
@@ -1664,6 +1677,14 @@ class LocaleLanguageSwitchingFunctionalTest extends DrupalWebTestCase {
     $this->assertIdentical($links, array('active' => array('en'), 'inactive' => array('fr')), 'Only the current language list item is marked as active on the language switcher block.');
     $this->assertIdentical($anchors, array('active' => array('en'), 'inactive' => array('fr')), 'Only the current language anchor is marked as active on the language switcher block.');
   }
+
+  /**
+   * Tests that languages can be added as disabled.
+   */
+  function testNewDisabledLanguage() {
+    // Add new language which will be disabled.
+    locale_add_language('de', 'German', 'Deutsch', LANGUAGE_LTR, '', '', FALSE, FALSE);
+  }
 }
 
 /**
@@ -2609,6 +2630,8 @@ class LocaleUILanguageNegotiationTest extends DrupalWebTestCase {
  * Test that URL rewriting works as expected.
  */
 class LocaleUrlRewritingTest extends DrupalWebTestCase {
+  protected $web_user;
+
   public static function getInfo() {
     return array(
       'name' => 'URL rewriting',
